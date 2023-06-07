@@ -1,13 +1,4 @@
-from django.views.generic import TemplateView
 from django.shortcuts import render
-
-
-class AboutTemplateView(TemplateView):
-    template_name = 'pages/about.html'
-
-
-class RulesTemplateView(TemplateView):
-    template_name = 'pages/rules.html'
 
 
 def page_not_found(request, exception):

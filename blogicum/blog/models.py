@@ -4,7 +4,7 @@ from django.urls import reverse
 
 User = get_user_model()
 
-_MAX_LENGTH = 256
+MAX_TITLE_LENGTH = 256
 
 
 class BaseModel(models.Model):
@@ -28,7 +28,7 @@ class BaseModel(models.Model):
 class Location(BaseModel):
     name = models.CharField(
         verbose_name='Название места',
-        max_length=_MAX_LENGTH,
+        max_length=MAX_TITLE_LENGTH,
         default='Планета Земля'
     )
 
@@ -41,13 +41,16 @@ class Location(BaseModel):
 
 
 class Category(BaseModel):
-    title = models.CharField(verbose_name='Заголовок', max_length=_MAX_LENGTH)
+    title = models.CharField(
+        verbose_name='Заголовок',
+        max_length=MAX_TITLE_LENGTH
+    )
     description = models.TextField(verbose_name='Описание')
     slug = models.SlugField(
         verbose_name='Идентификатор',
         unique=True,
-        help_text='Идентификатор страницы для URL; разрешены '
-        'символы латиницы, цифры, дефис и подчёркивание.'
+        help_text=('Идентификатор страницы для URL; разрешены '
+                   'символы латиницы, цифры, дефис и подчёркивание.')
     )
 
     class Meta:
@@ -56,12 +59,15 @@ class Category(BaseModel):
 
 
 class Post(BaseModel):
-    title = models.CharField(verbose_name='Заголовок', max_length=_MAX_LENGTH)
+    title = models.CharField(
+        verbose_name='Заголовок',
+        max_length=MAX_TITLE_LENGTH
+    )
     text = models.TextField(verbose_name='Текст')
     pub_date = models.DateTimeField(
         verbose_name='Дата и время публикации',
-        help_text='Если установить дату и время в будущем — '
-                  'можно делать отложенные публикации.'
+        help_text=('Если установить дату и время в будущем — '
+                   'можно делать отложенные публикации.')
     )
     author = models.ForeignKey(
         User,
@@ -114,6 +120,9 @@ class Comment(models.Model):
         verbose_name_plural = 'Комментарии'
         default_related_name = 'comments'
         ordering = ('created_at',)
+
+    def __str__(self):
+        return f'comment from {self.author} id = {self.pk}'
 
     def get_absolute_url(self):
         return reverse("blog:post_detail", kwargs={"pk": self.post.pk})
