@@ -5,20 +5,20 @@ from . import views
 app_name = 'blog'
 
 post_urls = [
-    path('<int:pk>/', views.post_detail, name='post_detail'),
+    path('<int:post_id>/', views.post_detail, name='post_detail'),
     path('create/', views.PostCreateView.as_view(), name='create_post'),
     path(
-        '<int:pk>/edit/',
+        '<int:post_id>/edit/',
         views.PostUpdateView.as_view(),
         name='edit_post'
     ),
     path(
-        '<int:pk>/delete/',
+        '<int:post_id>/delete/',
         views.PostDeleteView.as_view(),
         name='delete_post'
     ),
     path(
-        '<int:pk>/comment/',
+        '<int:post_id>/comment/',
         views.CreateComment.as_view(),
         name='add_comment'
     ),
@@ -32,15 +32,6 @@ post_urls = [
         views.DeleteComment.as_view(),
         name='delete_comment'
     ),
-]
-
-profile_urls = [
-    path(
-        'edit/',
-        views.UpdateProfileView.as_view(),
-        name='edit_profile'
-    ),
-    path('<str:username>/', views.profile_user, name='profile'),
 ]
 
 urlpatterns = [

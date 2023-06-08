@@ -96,7 +96,7 @@ class Post(BaseModel):
         ordering = ('-pub_date',)
 
     def get_absolute_url(self):
-        return reverse("blog:post_detail", kwargs={"pk": self.pk})
+        return reverse('blog:post_detail', kwargs={'post_id': self.pk})
 
 
 class Comment(models.Model):
@@ -125,4 +125,4 @@ class Comment(models.Model):
         return f'comment from {self.author} id = {self.pk}'
 
     def get_absolute_url(self):
-        return reverse("blog:post_detail", kwargs={"pk": self.post.pk})
+        return reverse('blog:post_detail', kwargs={'post_id': self.post.pk})

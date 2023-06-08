@@ -1,5 +1,3 @@
-from typing import Any
-
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 
@@ -9,34 +7,34 @@ from .models import Post, Comment
 class PostActionMixin:
     model = Post
     template_name = 'blog/create.html'
+    pk_url_kwarg = 'post_id'
 
-    def dispatch(self, request, *args: Any, **kwargs: Any):
-        post = get_object_or_404(Post, pk=kwargs.get('pk'))
+    def dispatch(self, request, *args, **kwargs):
+        post = get_object_or_404(Post, pk=kwargs.get('post_id'))
         if post.author != request.user:
-            return redirect('blog:post_detail', self.get_object().pk)
+            return redirect('blog:post_detail', post.id)
         return super().dispatch(request, *args, **kwargs)
 
 
 class CommentActionMixin:
     model = Comment
     template_name = 'blog/comment.html'
-
-    def get_object(self, queryset=None):
-        pk = self.request.path.strip('/').split('/')[-1]
-        return Comment.objects.filter(pk=pk).first()
+    pk_url_kwarg = 'comment_id'
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.id:
-            post = get_object_or_404(Post, pk=kwargs.get('post_id'))
-            get_object_or_404(
-                Comment,
-                pk=kwargs.get('comment_id'),
-                author=request.user, post=post
-            )
+        post = get_object_or_404(Post, pk=kwargs.get('post_id'))
+        comment = get_object_or_404(
+            Comment,
+            pk=kwargs.get('comment_id'),
+            post=post
+        )
+
+        if comment.author != request.user:
+            return redirect('blog:post_detail', post.pk)
         return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse_lazy(
             'blog:post_detail',
-            kwargs={'pk': self.get_object().post.id}
+            kwargs={'post_id': self.get_object().post.id}
         )
